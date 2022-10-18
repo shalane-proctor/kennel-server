@@ -1,0 +1,4 @@
+{
+  "python.formatting.autopep8Path": "/Users/shalaneproctor/.pyenv/shims/autopep8",
+  "python.linting.pylintEnabled": true
+}
