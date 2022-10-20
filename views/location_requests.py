@@ -10,6 +10,23 @@ LOCATIONS = [
         "address": "209 Emory Drive"
     }
 ]
+
+
+def create_location(location):
+    max_id = LOCATIONS[-1]["id"]
+    new_id = max_id + 1
+    location["id"] = new_id
+    LOCATIONS.append(location)
+    return location
+
+def delete_location(id):
+    location_index = -1
+    for index, location in enumerate(LOCATIONS):
+        if location["id"] == id:
+            location_index = index
+    if location_index >= 0:
+        LOCATIONS.pop(location_index)
+
 def get_all_locations():
     return LOCATIONS
 
