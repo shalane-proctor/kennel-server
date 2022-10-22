@@ -1,4 +1,13 @@
 {
   "python.formatting.autopep8Path": "/Users/shalaneproctor/.pyenv/shims/autopep8",
-  "python.linting.pylintEnabled": true
+  "python.linting.pylintEnabled": true,
+  "sqltools.useNodeRuntime": true,
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "database": "${workspaceFolder:kennels-server}/kennel.sqlite3",
+      "name": "Kennels SQL"
+    }
+  ]
 }
