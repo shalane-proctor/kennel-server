@@ -31,28 +31,54 @@ def create_employee(employee):
     return employee
 
 def delete_employee(id):
-    """Disable error"""
-    employees_index = -1
-    for index, employees in enumerate(EMPLOYEES):
-        if employees["id"] == id:
-            employees_index = index
-    if employees_index >= 0:
-        EMPLOYEES.pop(employees_index)
+    """delete"""
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM employee
+        WHERE id = ?
+        """, (id, ))
 
 def update_employee(id, new_employee):
-    """Iterate the employees list, but use enumerate() so that"""
-    for index, employee in enumerate(EMPLOYEES):
-        if employee["id"] == id:
-            EMPLOYEES[index] = new_employee
-            break
+    """update"""
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        UPDATE Employee
+            SET
+                name = ?,
+                address = ?,
+                location_id = ?,
+        WHERE id = ?
+        """, (new_employee['name'], new_employee['address'],
+              new_employee['location_id'], id, ))
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        return False
+    else:
+        return True
 
 def get_single_employee(id):
-    """Disable error"""
-    request_employee = None
-    for employee in EMPLOYEES:
-        if employee["id"] == id:
-            request_employee = employee
-    return request_employee
+    """ignore error"""
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.address,
+            a.location_id
+        FROM employee a
+        WHERE a.id = ?
+        """, (id, ))
+        data = db_cursor.fetchone()
+        employee = Employees(data['id'], data['name'],
+                             data['address'], data['location_id'])
+        return json.dumps(employee.__dict__)
 
 
 def get_all_employees():
@@ -75,4 +101,31 @@ def get_all_employees():
             employee = Employees(row['id'], row['name'],
                                 row['address'], row['location_id'])
             employees.append(employee.__dict__)
+    return json.dumps(employees)
+
+def get_employees_by_location(location_id):
+    """Ignore error"""
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        # Write the SQL query to get the information you want
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.address,
+            a.location_id
+        FROM employee a
+        WHERE a.location_id = ?
+        """, (location_id, ))
+
+        employees = []
+        dataset = db_cursor.fetchall()
+
+        for row in dataset:
+            employee = Employees(row['id'], row['name'],
+                                  row['address'], row['location_id'])
+            employees.append(employee.__dict__)
+
     return json.dumps(employees)

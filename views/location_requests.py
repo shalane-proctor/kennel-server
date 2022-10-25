@@ -25,28 +25,50 @@ def create_location(location):
     return location
 
 def delete_location(id):
-    """Disable error"""
-    location_index = -1
-    for index, location in enumerate(LOCATIONS):
-        if location["id"] == id:
-            location_index = index
-    if location_index >= 0:
-        LOCATIONS.pop(location_index)
+    """delete"""
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        DELETE FROM location
+        WHERE id = ?
+        """, (id, ))
 
 def update_location(id, new_location):
-    """Iterate the locations list, but use enumerate() so that"""
-    for index, location in enumerate(LOCATIONS):
-        if location["id"] == id:
-            LOCATIONS[index] = new_location
-            break
+    """update"""
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        UPDATE Location
+            SET
+                address = ?,
+                name = ?
+        WHERE id = ?
+        """, (new_location['name'], new_location['address'], id, ))
+        rows_affected = db_cursor.rowcount
+
+    if rows_affected == 0:
+        return False
+    else:
+        return True
 
 def get_single_location(id):
-    """Disable error"""
-    request_location = None
-    for location in LOCATIONS:
-        if location["id"] == id:
-            request_location = location
-    return request_location
+    """ignore error"""
+    with sqlite3.connect("./kennel.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT
+            a.id,
+            a.name,
+            a.address
+        FROM location a
+        WHERE a.id = ?
+        """, (id, ))
+        data = db_cursor.fetchone()
+        location = Location(data['id'], data['name'], data['address'])
+        return json.dumps(location.__dict__)
 
 
 def get_all_locations():
