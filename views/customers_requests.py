@@ -71,12 +71,12 @@ def get_single_customer(id):
         db_cursor = conn.cursor()
         db_cursor.execute("""
         SELECT
-            a.id,
-            a.name,
-            a.address,
-            a.email,
-            a.password
-        FROM customer a
+            c.id,
+            c.name,
+            c.address,
+            c.email,
+            c.password
+        FROM customer c
         WHERE a.id = ?
         """, (id, ))
         data = db_cursor.fetchone()

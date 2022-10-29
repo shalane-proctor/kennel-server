@@ -1,3 +1,6 @@
+from pickle import NONE
+
+
 class Employees():
     """_summary_
     """
@@ -6,3 +9,4 @@ class Employees():
         self.name = name
         self.address = address
         self.location_id = location_id
+        self.location = NONE

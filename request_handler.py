@@ -22,9 +22,9 @@ from views import (get_all_animals,
                    update_employee,
                    update_location,
                    update_customer,
+                   get_customers_by_email,
                    get_employees_by_location,
                    get_animals_by_status)
-from views.customers_requests import get_customers_by_email
 
 # Here's a class. It inherits from another class.
 # For now, think of a class as a container for functions that
@@ -186,17 +186,16 @@ class HandleRequests(BaseHTTPRequestHandler):
         post_body = json.loads(post_body)
         # Parse the URL
         (resource, id) = self.parse_url(self.path)
-        
         success = False
 
         if resource == "animals":
-           success = update_animal(id, post_body)
+            success = update_animal(id, post_body)
         if resource == "locations":
-           success = update_location(id, post_body)
+            success = update_location(id, post_body)
         if resource == "customers":
-           success = update_customer(id, post_body)
+            success = update_customer(id, post_body)
         if resource == "employees":
-           success = update_employee(id, post_body)
+            success = update_employee(id, post_body)
 
         if success:
             self._set_headers(204)
